@@ -10,7 +10,7 @@ Learning prototype cross-platform command line for Bella scene creation with sin
 - Using render event callbacks with EngineObserver override
 - Use of arguments
 - Adding quickmaterials to the scene
-- Shows how to write nodes ie belVoxelMat1["color"] |= belColor1.output("outColor");
+- Shows how to wire node output ie belVoxelMat1["color"] |= belColor1.output("outColor");
 - Using both procedural Bella box and a mesh box modelled from Blender
 - Hiding boilerplate code like cube mesh and basic Bella scene population in .h files 
 
