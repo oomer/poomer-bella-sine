@@ -130,7 +130,8 @@ int DL_main(dl::Args& args) {
     auto [  belWorld,
             belMeshVoxel,
             belLiqVoxel,
-            belVoxel ] = oom::bella::defaultSceneVoxel(belScene);
+            belVoxel,
+            belEmitterBlockXform ] = oom::bella::defaultSceneVoxel(belScene);
 
     auto belVoxelMat1 = belScene.createNode("quickMaterial", "oomVoxelMat1");
     auto belVoxelMat2 = belScene.createNode("quickMaterial", "oomVoxelMat2");
