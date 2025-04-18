@@ -20,17 +20,17 @@
 //==============================================================================
 
 // Vec3 is a simple struct that holds a 3D vector
-struct Vec3 {
-    float x, y, z;
-};
+//struct Vec3 {
+//    float x, y, z;
+//};
 
 // BoundingBox is a simple struct that holds a bounding box
 struct BoundingBox {
-    Vec3 min;
-    Vec3 max;
+    dl::Vec3 min;
+    dl::Vec3 max;
 
     // getCenter is a simple function that returns the center of the bounding box
-    Vec3 getCenter() const {
+    dl::Vec3 getCenter() const {
         return {
             (min.x + max.x) * 0.5f,
             (min.y + max.y) * 0.5f,
@@ -40,7 +40,7 @@ struct BoundingBox {
     
     // getRadius is a simple function that returns the radius of the bounding box
     float getRadius() const {
-        Vec3 center = getCenter();
+        dl::Vec3 center = getCenter();
         
         // Calculate distance from center to each corner and return the maximum
         float dx = std::max(std::abs(center.x - min.x), std::abs(center.x - max.x));
@@ -220,7 +220,7 @@ int DL_main(dl::Args& args) {
 
     }
 
-    Vec3 centerOfPlots = bbox.getCenter(); 
+    dl::Vec3 centerOfPlots = bbox.getCenter(); 
     dl::logInfo("Bounding Box Center: (%f, %f, %f)", centerOfPlots.x, centerOfPlots.y, centerOfPlots.z);
 
     float radiusOfPlots = bbox.getRadius();
@@ -230,10 +230,10 @@ int DL_main(dl::Args& args) {
     auto belCamera = belScene.camera();
     auto belCameraXform = belCameraPath.parent(); // thus the parent of the camera path is the xform node 99% of the time
     
-    auto targetCenter = dl::Vec3{ centerOfPlots.x, centerOfPlots.y, centerOfPlots.z };
+    //auto targetCenter = dl::Vec3{ centerOfPlots.x, centerOfPlots.y, centerOfPlots.z };
     
     // get a Transformation Matrix that will position the camera to view the entire scene
-    dl::Mat4 newCamXform = dl::bella_sdk::zoomExtents(belCameraPath, targetCenter, radiusOfPlots);
+    dl::Mat4 newCamXform = dl::bella_sdk::zoomExtents(belCameraPath, centerOfPlots, radiusOfPlots);
     // Apply to camera xform
     belCameraXform["steps"][0]["xform"] = newCamXform;
 
