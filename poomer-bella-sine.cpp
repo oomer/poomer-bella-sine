@@ -7,24 +7,29 @@
 
 #include "../bella_engine_sdk/src/bella_sdk/bella_engine.h" // For rendering and scene creation in Bella
 #include "../bella_engine_sdk/src/dl_core/dl_main.inl" // Core functionality from the Diffuse Logic engine
-#include "../oom/oom_license.h" // common misc code
-#include "../oom/oom_bella_long.h"    // common misc code
-#include "../oom/oom_bella_engine.h"    // common misc code
-#include "../oom/oom_bella_premade.h"    // common misc code
-#include "../oom/oom_bella_misc.h"    // common misc code
+
+// oomer's helper utility code to make main cpp smaller
+#include "../oom/oom_license.h"       // oomer's helper code for licenses
+#include "../oom/oom_bella_long.h"    // more oomer's helper code for bella, but has long data
+#include "../oom/oom_bella_engine.h"  // oomer's helper code for bella rendering
+#include "../oom/oom_bella_premade.h" // oomer's helper code for bella scenes
+#include "../oom/oom_bella_misc.h"    // oomer's hlper code for bella misc code
 
 //==============================================================================
 // GLOBAL VARIABLES AND FUNCTIONS
 //==============================================================================
 
+// Vec3 is a simple struct that holds a 3D vector
 struct Vec3 {
     float x, y, z;
 };
 
+// BoundingBox is a simple struct that holds a bounding box
 struct BoundingBox {
     Vec3 min;
     Vec3 max;
-    
+
+    // getCenter is a simple function that returns the center of the bounding box
     Vec3 getCenter() const {
         return {
             (min.x + max.x) * 0.5f,
@@ -33,6 +38,7 @@ struct BoundingBox {
         };
     }
     
+    // getRadius is a simple function that returns the radius of the bounding box
     float getRadius() const {
         Vec3 center = getCenter();
         
@@ -55,7 +61,7 @@ int DL_main(dl::Args& args) {
     BoundingBox bbox = {{1000000.0f, 1000000.0f, 1000000.0f},       // min point
                         {-1000000.0f, -1000000.0f, -1000000.0f} };  // max point
 
-
+    // Always put this before args to setup callbacks for Bella's log events
     int s_oomBellaLogContext = 0; 
     dl::subscribeLog(&s_oomBellaLogContext, oom::bella::log);
     dl::flushStartupMessages();
@@ -73,14 +79,15 @@ int DL_main(dl::Args& args) {
     args.add( "pm", "printMatrix",  "",   "print matrix4");
     args.add( "em", "eachmaterial", "",   "each voxel has own material");
     args.add( "sv", "scalevoxel",  "",   "each voxel has own scale");
+    args.add( "cv", "colorvariation",  "",   "adsd color variation");
 
     if (args.helpRequested()) {
-        std::cout << args.help("poomer-efsw © 2025 Harvey Fong","", "1.0") << std::endl;
+        std::cout << args.help("poomer-bella-sine (C) 2025 Harvey Fong","", "1.0") << std::endl;
         return 0;
     }
     
     if (args.have("--licenseinfo")) {
-        std::cout << "poomer-efsw © 2025 Harvey Fong" << std::endl;
+        std::cout << "poomer-bella-sine (C) 2025 Harvey Fong" << std::endl;
         std::cout << oom::license::printLicense() << std::endl;
         return 0;
     }
@@ -101,17 +108,25 @@ int DL_main(dl::Args& args) {
     if (args.have("--scale")) { argScale = std::stod(args.value("--scale").buf()); }
     int argModulus = 10;    
     if (args.have("--modulus")) { argModulus = std::stoi(args.value("--modulus").buf()); }
+    float argColorVariation = 0.55f;    
+    if (args.have("--colorvariation")) { argColorVariation = std::stof(args.value("--colorvariation").buf()); }
 
+
+    // Create a Bella Engine instance and load the default scene definitions ( all the nodes )
     dl::bella_sdk::Engine engine;
     engine.scene().loadDefs();
+
+    // Create an engine observer that we subscribe to catch Engine event callbacks
     oom::bella::MyEngineObserver engineObserver;
     engine.subscribe(&engineObserver);
 
+    // Get the scene
     auto belScene = engine.scene();
 
     // use oom helper to populate the scene with default voxel objects
     // this returns a tuple of the world node, the mesh voxel node, the liquid voxel node, and the voxel node
     // The latter 3 are unparented, and the world node is parented to the scene root
+    // This is a convenience function, see oom_bella_premade.h for more details
     auto [  belWorld,
             belMeshVoxel,
             belLiqVoxel,
@@ -126,7 +141,15 @@ int DL_main(dl::Args& args) {
     belVoxelMat1["color"] |= belColor1.output("outColor");
     belVoxelMat2["color"] |= belColor2.output("outColor");
 
-    // belColor["variation"] = 0.3f; // Uncomment to add color variation
+    if (args.have("--colorvariation")) {
+        dl::logCustom("Color variation: %f", argColorVariation);
+        belColor1["variation"] = argColorVariation; 
+        belColor2["variation"] = argColorVariation; 
+    }
+
+    if (args.have("--eachmaterial")) {
+        dl::logCustom("Outputing a separate material for each voxel");
+    }
 
     for (int i = 0; i < argNumPlotPoints; i+=1) {
         auto eachVoxel = belScene.createNode("xform", dl::String::format("eachVoxelXform%04d",i));
@@ -145,11 +168,9 @@ int DL_main(dl::Args& args) {
         dl::Mat4 myXform = dl::Mat4::identity;
         dl::Mat4 myTranslate = dl::Mat4::identity;
         dl::Mat4 myScale = dl::Mat4::identity;
-        // Uncomment to get double scale
-        //dl::Mat4 myScale = dl::math::makeScale<4>(2.0,2.0,2.0);  
 
         // Calculate the position of each point in the sine wave
-        double myX = i*1.0;
+        double myX = i;
         double myY = 0.0;
         double myZ = argZOffset + argSineAmpl * sin(argSineFreq * i); 
 
@@ -166,6 +187,7 @@ int DL_main(dl::Args& args) {
 
         // Override scale above if arg is passed
         if (args.have("--scalevoxel")) {
+            dl::logCustom("Scale voxel: %f", (i%argModulus+5)*0.5);
             myScale = dl::math::makeScale<4>(  (i%argModulus+5)*0.5,
                                                (i%argModulus+5)*0.5,
                                                (i%argModulus+5)*0.5);
