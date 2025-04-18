@@ -3,6 +3,34 @@ Learning prototype cross-platform command line for Bella scene creation with sin
 
 <img src="resources/example.jpg">
 
+# Demonstrates
+- Auto camera framing of sine wave
+- Bella scene file writing
+- Using Diffuse Logic's logging
+- Using render event callbacks with EngineObserver override
+- Use of arguments
+- Adding quickmaterials to the scene
+- Shows how to write nodes ie belVoxelMat1["color"] |= belColor1.output("outColor");
+- Using both procedural Bella box and a mesh box modelled from Blender
+- Hiding boilerplate code like cube mesh and basic Bella scene population in .h files 
+
+# Usage
+
+```
+poomer-bella-sine #generates a 100 voxel sine plot, output .bsa
+poomer-bella-sine -n:1000 # plot 1000 voxels on sine curve
+poomer-bella-sine -or:16 # render 16 frames of camera orbit
+poomer-bella-sine -sa:60 # sets amplitude
+poomer-bella-sine -sf:0.55 # sets sine frequency
+poomer-bella-sine -cv:0.65 # sets color variation
+poomer-bella-sine -em # sets one material per voxel plot with gradient
+poomer-bella-sine -r # render current image
+poomer-bella-sine -s:2 # set xfrom scale on voxels to double
+poomer-bella-sine -sv # set xfrom scale on voxels using modulus
+poomer-bella-sine -m:50 # set modulus event to occur every 50 voxels 
+```
+
+[todo] add checks for illegal argument values
 
 # Build 
 ```
