@@ -40,31 +40,63 @@ workdir/
 └── poomer-bella-sine/
 ```
 
-Download SDK for your OS and drag bella_engine_sdk into your workdir. On Windows rename unzipped folder by removing version ie bella_engine_sdk-24.6.0 -> bella_engine_sdk
-
-- [bella_engine_sdk MacOS](https://downloads.bellarender.com/bella_engine_sdk-24.6.0.dmg)
-- [bella_engine_sdk Linux](https://downloads.bellarender.com/bella_engine_sdk-24.6.0.tar.gz)
-- [bella_engine_sdk Win](https://downloads.bellarender.com/bella_engine_sdk-24.6.0.zip)
-
-
-
-# MacOS (tested) and Linux (untested)
+## MacOS (kasm-aaa) 
+- [ ] Install Xcode
 ```
 mkdir workdir
 cd workdir
+curl -LO https://downloads.bellarender.com/bella_engine_sdk-24.6.0.dmg
+hdiutil attach bella_engine_sdk-24.6.0.dmg
+cp -R /Volumes/Bella\ Engine\ SDK\ 24.6.0/* .
 git clone https://github.com/oomer/oom.git
 git clone https://github.com/oomer/poomer-bella-sine.git
 cd poomer-bella-sine
 make all -j4
+bin/Darwin/release/poomer-bella-sine -r
+open ./untitled.png
 ```
 
-# Windows (untested)
+## Ubuntu Linux (kasm-bbb)
 ```
+sudo apt install -y build-essential
+sudo apt install -y libx11-dev
+sudo apt install  -y libgl1-mesa-dev
+sudo apt install -y libtool
+sudo apt install -y cmake
+sudo apt install -y pkg-config 
 mkdir workdir
 cd workdir
+curl -LO https://downloads.bellarender.com/bella_engine_sdk-24.6.0.tar.gz
+tar -xvf  bella_engine_sdk-24.6.0.tar.gz
 git clone https://github.com/oomer/oom.git
 git clone https://github.com/oomer/poomer-bella-sine.git
 cd poomer-bella-sine
-msbuild poomer-bella-sine.vcxproj /p:Configuration=release /p:Platform=x64 /p:PlatformToolset=v143
+make all -j4
+bin/Linux/release/poomer-bella-sine -r
+file ./untitled.png
+```
+
+## Windows (kasm-jay tested) 
+- [optioanl] Install https://git-scm.com
+
+- Download Visual Studio Community Edition 2022
+- Run VisualStudioSetup.exe
+- Workload = [x] Desktop developemnt with C++
+- Individial components = [x] Git For Windows
+
+Run **x64 Native Tools Command Prompt for VS 2022**
+```
+cd %USERPROFILE%
+mkdir workdir\bella_engine_sdk
+cd workdir\bella_engine_sdk
+curl -LO https://downloads.bellarender.com/bella_engine_sdk-24.6.0.zip
+tar -xf bella_engine_sdk-24.6.0.zip 
+cd ..
+git clone https://github.com/oomer/oom.git
+git clone https://github.com/oomer/poomer-bella-sine.git
+cd poomer-bella-sine
+msbuild poomer-bella-sine.vcxproj /p:Configuration=release /p:Platform=x64 /p:PlatformToolset=v143 
+x64\release\poomer-bella-sine.exe -r
+start ./untitled.png
 ```
 

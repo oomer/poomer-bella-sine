@@ -1,4 +1,3 @@
-
 BELLA_SDK_NAME	= bella_engine_sdk
 EXECUTABLE_NAME	= poomer-bella-sine
 PLATFORM        = $(shell uname)
@@ -24,10 +23,14 @@ ifeq ($(PLATFORM), Darwin)
     # Architecture flags
     ARCH_FLAGS           = -arch arm64 -mmacosx-version-min=11.0 -isysroot $(MACOS_SDK_PATH)
 
+    # Library directory for weak linking
+    LIBDIR               = /usr/local/lib
+
     # Linking flags - Use multiple rpath entries to look in executable directory
     LINKER_FLAGS         = $(ARCH_FLAGS) -framework Cocoa -framework IOKit -fvisibility=hidden -O5 \
                           -rpath @executable_path \
-                          -rpath .
+                          -rpath . \
+                          -weak_library $(LIBDIR)/libvulkan.dylib
 
                           #-rpath @loader_path \
                           #-Xlinker -rpath -Xlinker @executable_path
@@ -43,8 +46,12 @@ else
     # Architecture flags
     ARCH_FLAGS           = -m64 -D_FILE_OFFSET_BITS=64
 
-    # Linking flags
-    LINKER_FLAGS         = $(ARCH_FLAGS) -fvisibility=hidden -O3 -Wl,-rpath,'$$ORIGIN' -Wl,-rpath,'$$ORIGIN/lib' -weak_library $(LIBDIR)/libvulkan.dylib
+    # Library directory for weak linking
+    LIBDIR               = /usr/lib/x86_64-linux-gnu
+
+    # Linking flags - Linux weak linking equivalent
+    LINKER_FLAGS         = $(ARCH_FLAGS) -fvisibility=hidden -O3 -Wl,-rpath,'$$ORIGIN' -Wl,-rpath,'$$ORIGIN/lib' \
+                          -Wl,--no-as-needed -L$(LIBDIR) -lvulkan
 
     # Platform-specific libraries
     #PLIST_LIB            = -lplist
