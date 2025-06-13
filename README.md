@@ -40,14 +40,14 @@ workdir/
 └── poomer-bella-sine/
 ```
 
-## MacOS (kasm-aaa) 
+## MacOS (kasm-monterey) 
 - [ ] Install Xcode
 ```
 mkdir workdir
 cd workdir
 curl -LO https://downloads.bellarender.com/bella_engine_sdk-24.6.0.dmg
 hdiutil attach bella_engine_sdk-24.6.0.dmg
-cp -R /Volumes/Bella\ Engine\ SDK\ 24.6.0/* .
+cp -R /Volumes/Bella\ Engine\ SDK\ 24.6.0/bella_engine_sdk .
 git clone https://github.com/oomer/oom.git
 git clone https://github.com/oomer/poomer-bella-sine.git
 cd poomer-bella-sine
@@ -56,14 +56,9 @@ bin/Darwin/release/poomer-bella-sine -r
 open ./untitled.png
 ```
 
-## Ubuntu Linux (kasm-bbb)
+## Ubuntu Linux (kasm-ubuntu)
 ```
-sudo apt install -y build-essential
-sudo apt install -y libx11-dev
-sudo apt install  -y libgl1-mesa-dev
-sudo apt install -y libtool
-sudo apt install -y cmake
-sudo apt install -y pkg-config 
+sudo apt install -y build-essential curl
 mkdir workdir
 cd workdir
 curl -LO https://downloads.bellarender.com/bella_engine_sdk-24.6.0.tar.gz
@@ -76,7 +71,7 @@ bin/Linux/release/poomer-bella-sine -r
 file ./untitled.png
 ```
 
-## Windows (kasm-jay tested) 
+## Windows (kasm-win11pro) 
 - [optioanl] Install https://git-scm.com
 
 - Download Visual Studio Community Edition 2022
