@@ -20,17 +20,21 @@ ifeq ($(PLATFORM), Darwin)
     CC                   = clang
     CXX                  = clang++
 
-    # Architecture flags
-    ARCH_FLAGS           = -arch arm64 -mmacosx-version-min=11.0 -isysroot $(MACOS_SDK_PATH)
+    # Architecture flags - support both x86_64 and arm64
+    ARCH_FLAGS           = -arch x86_64 -arch arm64 -mmacosx-version-min=11.0 -isysroot $(MACOS_SDK_PATH)
 
     # Library directory for weak linking
     LIBDIR               = /usr/local/lib
+
+    # Check if Vulkan library exists
+    VULKAN_LIB          = $(LIBDIR)/libvulkan.dylib
+    VULKAN_FLAGS        = $(if $(wildcard $(VULKAN_LIB)),-weak_library $(VULKAN_LIB),)
 
     # Linking flags - Use multiple rpath entries to look in executable directory
     LINKER_FLAGS         = $(ARCH_FLAGS) -framework Cocoa -framework IOKit -fvisibility=hidden -O5 \
                           -rpath @executable_path \
                           -rpath . \
-                          -weak_library $(LIBDIR)/libvulkan.dylib
+                          $(VULKAN_FLAGS)
 
                           #-rpath @loader_path \
                           #-Xlinker -rpath -Xlinker @executable_path
